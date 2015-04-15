@@ -1,0 +1,91 @@
+AndroidManifest.xml
+	<manifest>
+		<application>
+			<activity android:name="path.to.package.NameOfClassActivity">
+				<intent-filter>
+					<action android:name="android.intent.action.MAIN" />
+					<category android:name="android.intent.category.LAUNCHER" />
+				</intent-filter>
+			</activity>
+		</application>
+	</manifest>
+
+///////////////////////////////////////////////////////////////////////////////
+<!-- 
+[1]	import path.to.package.NameOfPermanentFragmentClass.ListSelectionListener
+[2]	implement ListSelectionListener,
+[3]	add reference to NameOfSecondaryFragmentClass,
+[4]	add FragmentManager/FragmentTransaction,
+[5]	commit fragment transaction
+	-->
+////////////////////////////////////////////////////////////////////////////////
+
+src/name.of.project/NameOfClassActivity.java
+	package path.to.package
+[1]	import path.to.package.NameOfPermanentFragmentClass.ListSelectionListener
+[2]	public class NameOfClassActivity extends Activity implements ListSelectionListener {
+[3]		private final NameOfSecondaryFragmentClass mNameOfSecondaryFragment = new NameOfSecondaryFragmentClass();
+		@Override
+		protected void onCreate() {
+			setContentView(R.layout.main);
+			
+[4]			FragmentManager fragmentManager = getFragmentManager();
+[4]			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+[4]			fragmentTransaction.add(R.id.permanent_frame, new NameOfPermanentFragmentClass());
+[4]			fragmentTransaction.add(R.id.secondary_frame, mNameOfSecondaryFragment);
+[5]			fragmentTransaction.commit();
+		}
+[?]		@Override
+[?]		public void onListSelection(int index) {
+[?]			if (mNameOfSecondaryFragment.getShownIndex() != index) {
+[?]				mNameOfSecondaryFragment.showQuoteAtIndex(index);
+[?]			}
+		}
+	}
+	
+////////////////////////////////////////////////////////
+<!--
+[6]	change <Fragment> to <FrameLayout>
+	-->
+////////////////////////////////////////////////////////
+res/layout/main.xml
+[6]	<FrameLayout
+[6]		android:id="@+id/permanent_frame"
+[6]		android:layout_weight="1" >
+[6]	</FrameLayout>
+[6]	<FrameLayout
+[6]		android:id="@+id/secondary_frame"
+[6]		android:layout_weight="2" >
+[6]	</FrameLayout>
+	
+src/name.of.project/NameOfPermanentFragmentClass.java
+	package path.to.package;
+	public class NameOfPermanentFragmentClass extends NameOfSubFragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			View view = inflater.inflate(R.layout.name_of_permanent_fragment, container, false);
+			return view;
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			mActivityView = (NameOfWidgetView) getActivity().findViewById(R.id.nameOfActivityView);
+		}
+	}
+	
+res/layout/name_of_permanent_fragment.xml
+
+src/name.of.project/NameOfSecondaryFragmentClass.java
+	package path.to.package;
+	public class NameOfSecondaryFragmentClass extends NameOfSubFragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			return inflater.inflate(R.layout.name_of_secondary_fragment, container, false);
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			mActivityView = (NameOfWidgetView) getActivity().findViewById(R.id.nameOfActivityView);
+		}
+	}
+	
+res/layout/name_of_secondary_fragment.xml
+	

@@ -1,0 +1,97 @@
+AndroidManifest.xml
+	<manifest>
+		<application>
+			<activity android:name="path.to.package.NameOfClassActivity">
+				<intent-filter>
+					<action android:name="android.intent.action.MAIN" />
+					<category android:name="android.intent.category.LAUNCHER" />
+				</intent-filter>
+			</activity>
+		</application>
+	</manifest>
+
+src/name.of.project/NameOfClassActivity.java
+	package path.to.package
+	import path.to.package.NameOfPermanentFragmentClass.ListSelectionListener
+	public class NameOfClassActivity extends Activity implements ListSelectionListener {
+		private final NameOfSecondaryFragmentClass mNameOfSecondaryFragment = new NameOfSecondaryFragmentClass();
+		@Override
+		protected void onCreate() {
+			setContentView(R.layout.main);
+			
+			FragmentManager fragmentManager = getFragmentManager();
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.add(R.id.primary_fragment_container, new NameOfPermanentFragmentClass());
+
+			fragmentTransaction.commit();
+		}
+		@Override
+		public void onListSelection(int index) {
+			if (!mNameOfSecondaryFragment.isAdded()) {
+				FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+				fragmentTransaction.add(R.id.secondary_fragment_container, mNameOfSecondaryFragment);
+				fragmentTransaction.addToBackStack(null);
+				fragmentTransaction.commit();
+				mFragmentManager.executePendingTransactions();
+			}
+			if (mNameOfSecondaryFragment.getShownIndex() != index) {
+				mNameOfSecondaryFragment.showQuoteAtIndex(index);
+			}
+		}
+	}
+	
+
+res/layout/main.xml
+	<FrameLayout
+		android:id="@+id/primary_fragment_container"
+		android:layout_weight="1" >
+	</FrameLayout>
+	<FrameLayout
+		android:id="@+id/secondary_fragment_container"
+		android:layout_weight="2" >
+	</FrameLayout>
+	
+/////////////////////////////////////////////////////
+<!--
+[1]	Add call to setRetainInstance(true) in onCreate()
+[2] If user has previously selected a title, mCurrIdx !=-1, so keep the title selected while onActivityCreated() is being called
+	-->
+/////////////////////////////////////////////////////
+	
+src/name.of.project/NameOfPermanentFragmentClass.java
+	package path.to.package;
+	public class NameOfPermanentFragmentClass extends NameOfSubFragment {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+[1]		setRetainInstance(true);
+		}
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			return inflater.inflate(R.layout.name_of_permanent_fragment, container, false);
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			mActivityView = (NameOfWidgetView) getActivity().findViewById(R.id.nameOfActivityView);
+[2]			if (mCurrIdx != -1)
+[2]				getListView().setItemChecked(mCurrIdx, true);
+		}	
+	}
+	
+res/layout/name_of_permanent_fragment.xml
+
+src/name.of.project/NameOfSecondaryFragmentClass.java
+	package path.to.package;
+	public class NameOfSecondaryFragmentClass extends NameOfSubFragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			return inflater.inflate(R.layout.name_of_secondary_fragment, container, false);
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			mActivityView = (NameOfWidgetView) getActivity().findViewById(R.id.nameOfActivityView);
+			
+		}
+	}
+	
+res/layout/name_of_secondary_fragment.xml
+	

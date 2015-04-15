@@ -1,0 +1,57 @@
+AndroidManifest.xml
+	<manifest>
+		<application>
+			<activity android:name="path.to.package.NameOfClassActivity">
+				<intent-filter>
+					<action android:name="android.intent.action.MAIN" />
+					<category android:name="android.intent.category.LAUNCHER" />
+				</intent-filter>
+			</activity>
+		</application>
+	</manifest>
+
+src/name.of.project/NameOfClassActivity.java
+	package path.to.package
+	public class NameOfClassActivity extends Activity {
+		@Override
+		protected void onCreate() {
+			setContentView(R.layout.main);
+		}
+	}
+
+res/layout/main.xml
+	<fragment class="path.to.package.NameOfFragmentClass" />
+	<fragment class="..." />
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+<!--
+[1]	NameOfSubFragment can be ListFragment, SearchFragment, WebViewFragment, DialogFragment, etc...
+	see http://developer.android.com/reference/android/app/Fragment.html -> Known Direct Subclasses
+	Or, it can just be Fragment.
+
+[2]	NameOfWidgetView can be TextView, ScrollView, RadioGroup, ImageView, etc...
+	see http://developer.android.com/reference/android/widget/package-summary.html -> Classes
+	
+[3]	Get reference to fragment's widget (to dynamically fill it)
+	-->
+/////////////////////////////////////////////////////////////////////////////////////////////
+	
+src/name.of.project/NameOfFragmentClass.java
+	package path.to.package;
+[1]	public class NameOfFragmentClass extends NameOfSubFragment {
+[2]		private NameOfWidgetView mActivityView = null;
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			View view = inflater.inflate(R.layout.name_of_fragment, container, false);
+			return view;
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+[3][2]		mActivityView = (NameOfWidgetView) getActivity().findViewById(R.id.nameOfActivityView);
+		}
+	}
+	
+res/layout/name_of_fragment.xml
+[2]	<NameOfWidgetView
+		android:id=@+id/nameOfActivityView" >
+[2]	</NameOfWidgetView>
